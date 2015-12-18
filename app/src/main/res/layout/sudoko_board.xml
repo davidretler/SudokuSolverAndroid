@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="1">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="2">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="3">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="4">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="5">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="6">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="7">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="8">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+        <com.davidretler.sudokusolver.sudokuCell
+            style="@style/SudokuCell"
+            android:text="9">
+        </com.davidretler.sudokusolver.sudokuCell>
+
+    </LinearLayout>
+
+</LinearLayout>
