@@ -32,7 +32,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
                             int gridId = getResources().getIdentifier("grid" + gridRow + gridCol, "id", "com.davidretler.sudokusolver");
                             View currGrid = findViewById(gridId);
                             Log.d("parseBoard()", "Got the grid!");
-                            int cellNum = cellRow * 3 + cellCol;
+                            int cellNum = (cellRow-1) * 3 + cellCol;
                             int cellId = getResources().getIdentifier("cell" + cellNum, "id", "com.davidretler.sudokusolver");
                             Log.d("parseBoard()", "Trying to get cell " + cellNum);
                             TextView cell = (TextView) currGrid.findViewById(cellId);
@@ -55,5 +55,11 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
         return null;
     }
+
+    public void promptCellEntry(View view) {
+        Log.d("promptCellEntry()", "Prompting entry for cell value");
+        AlertFactory.info("Prompt Entry", "This will prompt an entry for the cell", this.getApplicationContext());
+    }
+
 
 }
