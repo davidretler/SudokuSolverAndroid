@@ -29,6 +29,13 @@
             android:onClick="solveBoard"
             android:text="Solve">
         </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clearBoard"
+            android:text="Clear">
+        </Button>
     </LinearLayout>
 
 </LinearLayout>

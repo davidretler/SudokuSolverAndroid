@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -59,13 +60,16 @@ public class SudokuCell extends TextView {
     private class FocusListener implements OnFocusChangeListener {
 
         ColorStateList oldColors = getTextColors();
+        Drawable oldBackground = getBackground();
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus) {
                 setTextColor(getResources().getColor(R.color.colorAccent));
+                setBackgroundColor(getResources().getColor(R.color.lighterGray));
             } else {
                 setTextColor(oldColors);
+                setBackground(oldBackground);
             }
         }
     }
