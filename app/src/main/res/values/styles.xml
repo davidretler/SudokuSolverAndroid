@@ -15,19 +15,36 @@
         <item name = "android:layout_width">0dp</item>
         <item name = "android:textSize">35sp</item>
         <item name = "android:clickable">true</item>
-        <item name = "android:onClick">promptCellEntry</item>
+        <item name = "android:maxLength">1</item>
+        <item name = "android:digits">0123456789</item>
+        <item name = "android:inputType">number</item>
+        <item name = "android:editable">true</item>
+        <item name = "android:focusableInTouchMode">true</item>
+        <item name = "android:selectAllOnFocus">true</item>
     </style>
 
     <style name="horizontalDivider">
-        <item name = "android:layout_height">1dp</item>
+        <item name = "android:layout_height">2dp</item>
         <item name = "android:layout_width">match_parent</item>
         <item name = "android:background">@android:color/darker_gray</item>
     </style>
 
     <style name="verticalDivider">
         <item name = "android:layout_height">match_parent</item>
-        <item name = "android:layout_width">1dp</item>
+        <item name = "android:layout_width">2dp</item>
         <item name = "android:background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="horizontalDividerLight">
+        <item name = "android:layout_height">1dp</item>
+        <item name = "android:layout_width">match_parent</item>
+        <item name = "android:background">@color/lightGray</item>
+    </style>
+
+    <style name="verticalDividerLight">
+        <item name = "android:layout_height">match_parent</item>
+        <item name = "android:layout_width">1dp</item>
+        <item name = "android:background">@color/lightGray</item>
     </style>
 
 </resources>
