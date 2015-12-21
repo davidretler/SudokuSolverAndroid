@@ -9,7 +9,7 @@ import android.content.DialogInterface;
  *
  * Created by david on 12/20/15.
  */
-public class AlertFactory {
+public class Alerts {
     public static void info(String title, String text, Context context) {
         new AlertDialog.Builder(context)
                 .setTitle(title)
@@ -24,7 +24,7 @@ public class AlertFactory {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_info_outline_grey_800_18dp)
                 .show();
     }
 }

@@ -12,23 +12,23 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="1"
             android:id="@+id/cell1">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="2"
             android:id="@+id/cell2">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="3"
             android:id="@+id/cell3">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
     </LinearLayout>
 
@@ -38,23 +38,23 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="4"
             android:id="@+id/cell4">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="5"
             android:id="@+id/cell5">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="6"
             android:id="@+id/cell6">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
     </LinearLayout>
 
@@ -64,23 +64,23 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="7"
             android:id="@+id/cell7">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="8"
             android:id="@+id/cell8">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
-        <com.davidretler.sudokusolver.sudokuCell
+        <com.davidretler.sudokusolver.SudokuCell
             style="@style/SudokuCell"
             android:text="9"
             android:id="@+id/cell9">
-        </com.davidretler.sudokusolver.sudokuCell>
+        </com.davidretler.sudokusolver.SudokuCell>
 
     </LinearLayout>
 

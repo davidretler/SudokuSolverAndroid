@@ -14,6 +14,8 @@
         <item name = "android:layout_weight">1</item>
         <item name = "android:layout_width">0dp</item>
         <item name = "android:textSize">35sp</item>
+        <item name = "android:clickable">true</item>
+        <item name = "android:onClick">promptCellEntry</item>
     </style>
 
     <style name="horizontalDivider">

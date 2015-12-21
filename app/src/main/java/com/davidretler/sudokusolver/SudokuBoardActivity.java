@@ -53,13 +53,11 @@ public class SudokuBoardActivity extends AppCompatActivity {
             }
         }
 
-        return null;
+        return new SudokuBoard(boardArray);
     }
 
     public void promptCellEntry(View view) {
         Log.d("promptCellEntry()", "Prompting entry for cell value");
-        AlertFactory.info("Prompt Entry", "This will prompt an entry for the cell", this.getApplicationContext());
+        Alerts.info("Prompt Entry", "This will prompt an entry for the cell", SudokuBoardActivity.this);
     }
-
-
 }
