@@ -18,7 +18,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         Log.d("solveBoard()", "This will solve the board");
         Log.d("solveBoard()", "Turning off listeners");
         SudokuCell.ignoreListeners = true;
-        SudokuBoard myBoard = parseBoard();
+        SudokuBoard myBoard = parseBoard(view);
         if (myBoard.solve()) {
             displayBoard(myBoard);
         } else {
@@ -29,7 +29,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
     }
 
     // parse the current state of the board and return a sudokuboard object with that state
-    private SudokuBoard parseBoard() {
+    private SudokuBoard parseBoard(View view) {
 
         Log.d("solveBoard()", "Turning off listeners");
         SudokuCell.ignoreListeners = true;
@@ -60,7 +60,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
                         } catch(Exception ex) {
                             Log.e("parseBoard()", "Failed loading board at " + gridRow + " " + gridCol + " " + cellRow + " " + cellCol);
-                            Alerts.error("Error", "There was an error parsing the board.", this.getApplicationContext());
+                            Alerts.error("Error", "There was an error parsing the board.", view.getContext());
                             ex.printStackTrace();
                         }
                     }
