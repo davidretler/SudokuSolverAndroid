@@ -18,6 +18,8 @@ import android.widget.TextView;
  */
 public class SudokuCell extends TextView {
 
+    static boolean ignoreListeners = false;
+
     public SudokuCell(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -48,12 +50,14 @@ public class SudokuCell extends TextView {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if(s.toString().equals("0")) {
-                s.clear();
-                s.append(" ");
+            if (!ignoreListeners) {
+                if (s.toString().equals("0")) {
+                    s.clear();
+                    s.append(" ");
+                }
+                clearFocus();
+                requestFocus();
             }
-            clearFocus();
-            requestFocus();
         }
     }
 
@@ -64,12 +68,14 @@ public class SudokuCell extends TextView {
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus) {
-                setTextColor(getResources().getColor(R.color.colorAccent));
-                setBackgroundColor(getResources().getColor(R.color.lighterGray));
-            } else {
-                setTextColor(oldColors);
-                setBackground(oldBackground);
+            if (!ignoreListeners) {
+                if (hasFocus) {
+                    setTextColor(getResources().getColor(R.color.colorAccent));
+                    setBackgroundColor(getResources().getColor(R.color.lighterGray));
+                } else {
+                    setTextColor(oldColors);
+                    setBackground(oldBackground);
+                }
             }
         }
     }
