@@ -1,8 +1,14 @@
 package com.davidretler.sudokusolver;
 
+import android.os.SystemClock;
+import android.util.Log;
+
 public class SudokuBoard {
 
-	int[][] board;
+	// store the board
+	private int[][] board;
+	// reference to the activity (to update the board)
+	private SudokuBoardActivity activity = null;
 
 	/**
 	 * Defult constructor. Creates a blank board.
@@ -164,6 +170,21 @@ public class SudokuBoard {
 		if (count == 1) {
 			for (int num = 1; num <= 9; num++) {
 				if (this.set(i, j, num)) {
+					if(activity.step) {
+                        // final board for inner method
+						final SudokuBoard theBoard = new SudokuBoard(this.getState());
+                        // must run the displayBoard() call on the UI thread
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("definiteMove()", "Displaying board");
+                                activity.displayBoard(theBoard);
+                            }
+                        });
+					}
+                    SystemClock.sleep((long) activity.stepTime);
+                    Log.d("definiteMove()", "Made definite move");
 					break;
 				}
 			}
@@ -337,6 +358,14 @@ public class SudokuBoard {
 			}
 		} while (move); // restart loop as long as we can make changes
 
+	}
+
+	/**
+	 * Set the activity, so we can update the board
+	 * @param activity the activity
+	 */
+	public void setActivity(SudokuBoardActivity activity) {
+		this.activity = activity;
 	}
 
 }

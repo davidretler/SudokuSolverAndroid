@@ -1,5 +1,6 @@
 package com.davidretler.sudokusolver;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // whether or not we solve the board step-by-step
     static boolean step = false;
 
-    static double stepTime = 5;
+    static double stepTime = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +56,42 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // solve the board
     public void solveBoard(View view) {
         Log.d("solveBoard()", "This will solve the board");
-        Log.d("solveBoard()", "Turning off listeners");
-        SudokuCell.ignoreListeners = true;
-        SudokuBoard myBoard = parseBoard(view);
-        if (myBoard.solve()) {
-            displayBoard(myBoard);
-        } else {
-            Alerts.error("No Solution", "The current board has no valid solution.", view.getContext());
-        }
-        Log.d("solveBoard()", "Turning on listeners");
-        SudokuCell.ignoreListeners = false;
+
+        // final context for creating dialog
+        final Context context = view.getContext();
+        final SudokuBoard myBoard = parseBoard(view);
+        myBoard.setActivity(this);
+
+        // background thread to solve the board
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                // turn of listeners while solving board, for performance
+                Log.d("solveBoard()", "Turning off listeners");
+                SudokuCell.ignoreListeners = true;
+
+                Log.d("solveBoard()", "Solving board");
+                myBoard.solve();
+                if (myBoard.solved()) {
+                    // display the board... must be called through UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            displayBoard(myBoard);
+                        }
+                    });
+                } else {
+                    Alerts.error("No Solution", "The current board has no valid solution.", context);
+                }
+
+                // turn the listeners back on
+                Log.d("solveBoard()", "Turning on listeners");
+                SudokuCell.ignoreListeners = false;
+            }
+        }).start();
+
+
     }
 
     // parse the current state of the board and return a sudokuboard object with that state
@@ -113,9 +140,9 @@ public class SudokuBoardActivity extends AppCompatActivity {
         return new SudokuBoard(boardArray);
     }
 
-    private void displayBoard(SudokuBoard board) {
+    void displayBoard(SudokuBoard board) {
 
-        Log.d("solveBoard()", "Turning off listeners");
+        Log.d("displayBoard()", "Turning off listeners");
         SudokuCell.ignoreListeners = true;
 
         for(int gridRow = 1; gridRow <= 3; gridRow++) {
@@ -126,20 +153,20 @@ public class SudokuBoardActivity extends AppCompatActivity {
                         SudokuCell cell = getCell(gridRow, gridCol, cellRow, cellCol);
                         int boardIndexRow = (gridRow-1)*3 + cellRow - 1;
                         int boardIndexCol = (gridCol-1)*3 + cellCol - 1;
-
-                        cell.setText("" + board.getNum(boardIndexRow,boardIndexCol));
+                        int cellValue = board.getNum(boardIndexRow,boardIndexCol);
+                        cell.setText("" + (cellValue != 0 ? cellValue : " "));
                     }
                 }
             }
         }
 
-        Log.d("solveBoard()", "Turning on listeners");
+        Log.d("displayBoard()", "Turning on listeners");
         SudokuCell.ignoreListeners = false;
     }
 
     public void clearBoard(View view) {
 
-        Log.d("solveBoard()", "Turning off listeners");
+        Log.d("clearBoard()", "Turning off listeners");
         SudokuCell.ignoreListeners = true;
 
         for(int gridRow = 1; gridRow <= 3; gridRow++) {
@@ -154,7 +181,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
             }
         }
 
-        Log.d("solveBoard()", "Turning on listeners");
+        Log.d("clearBoard()", "Turning on listeners");
         SudokuCell.ignoreListeners = false;
     }
 
