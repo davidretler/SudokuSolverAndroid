@@ -14,6 +14,8 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // whether or not we solve the board step-by-step
     static boolean step = false;
 
+    static double stepTime = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // start the activity
@@ -44,6 +46,8 @@ public class SudokuBoardActivity extends AppCompatActivity {
                 step = true;
             }
             return true;
+        } else if (item.getItemId() == R.id.step_time) {
+            Alerts.timeDialog(this);
         }
         return false;
     }

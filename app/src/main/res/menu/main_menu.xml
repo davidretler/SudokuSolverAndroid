@@ -5,4 +5,8 @@
         android:title="Solve step-by-step"
         android:checkable="true"
         />
+    <item
+        android:id="@+id/step_time"
+        android:title="Time step"
+        />
 </menu>
