@@ -15,7 +15,11 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // whether or not we solve the board step-by-step
     static boolean step = false;
 
-    static double stepTime = 5000;
+    // the time (in ms) to wait between steps if solving step by step
+    static double stepTime = 500;
+
+    // are we currently solving the board?
+    static boolean solving = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                SudokuBoardActivity.solving = true;
                 // turn of listeners while solving board, for performance
                 Log.d("solveBoard()", "Turning off listeners");
                 SudokuCell.ignoreListeners = true;
@@ -88,6 +93,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
                 // turn the listeners back on
                 Log.d("solveBoard()", "Turning on listeners");
                 SudokuCell.ignoreListeners = false;
+                SudokuBoardActivity.solving = false;
             }
         }).start();
 
@@ -134,8 +140,10 @@ public class SudokuBoardActivity extends AppCompatActivity {
             }
         }
 
-        Log.d("solveBoard()", "Turning on listeners");
-        SudokuCell.ignoreListeners = false;
+        if(!solving) {
+            Log.d("solveBoard()", "Turning on listeners");
+            SudokuCell.ignoreListeners = false;
+        }
 
         return new SudokuBoard(boardArray);
     }
@@ -153,15 +161,17 @@ public class SudokuBoardActivity extends AppCompatActivity {
                         SudokuCell cell = getCell(gridRow, gridCol, cellRow, cellCol);
                         int boardIndexRow = (gridRow-1)*3 + cellRow - 1;
                         int boardIndexCol = (gridCol-1)*3 + cellCol - 1;
-                        int cellValue = board.getNum(boardIndexRow,boardIndexCol);
+                        int cellValue = board.getNum(boardIndexRow, boardIndexCol);
                         cell.setText("" + (cellValue != 0 ? cellValue : " "));
                     }
                 }
             }
         }
 
-        Log.d("displayBoard()", "Turning on listeners");
-        SudokuCell.ignoreListeners = false;
+        if(!solving) {
+            Log.d("displayBoard()", "Turning on listeners");
+            SudokuCell.ignoreListeners = false;
+        }
     }
 
     public void clearBoard(View view) {

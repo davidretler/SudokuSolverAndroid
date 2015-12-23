@@ -10,6 +10,19 @@ public class SudokuBoard {
 	// reference to the activity (to update the board)
 	private SudokuBoardActivity activity = null;
 
+    // runnable to update the board
+    // thgis is necessary as updating the UI cannot be done in the solve thread
+    // so we must post this runnable to the UI thread
+    private class BoardUpdater implements Runnable {
+
+        @Override
+        public void run() {
+            Log.d("definiteMove()", "Displaying board");
+            activity.displayBoard(SudokuBoard.this);
+        }
+    }
+
+
 	/**
 	 * Defult constructor. Creates a blank board.
 	 */
@@ -170,20 +183,9 @@ public class SudokuBoard {
 		if (count == 1) {
 			for (int num = 1; num <= 9; num++) {
 				if (this.set(i, j, num)) {
-					if(activity.step) {
-                        // final board for inner method
-						final SudokuBoard theBoard = new SudokuBoard(this.getState());
-                        // must run the displayBoard() call on the UI thread
+					// update board if we're watching step-by-step
+                    updateIfStep();
 
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("definiteMove()", "Displaying board");
-                                activity.displayBoard(theBoard);
-                            }
-                        });
-					}
-                    SystemClock.sleep((long) activity.stepTime);
                     Log.d("definiteMove()", "Made definite move");
 					break;
 				}
@@ -293,6 +295,9 @@ public class SudokuBoard {
 					// if we can set the current position to, do so and solve
 					// rest of board
 
+                    // display board if updating step by step
+                    updateIfStep();
+
 					// next i value is either i+1 or 1 if i is already 9
 					int nextI = i < 8 ? i + 1 : 1;
 					int nextJ = j;
@@ -359,6 +364,13 @@ public class SudokuBoard {
 		} while (move); // restart loop as long as we can make changes
 
 	}
+
+    private void updateIfStep() {
+        if(activity.step) {
+            activity.runOnUiThread(new BoardUpdater());
+            SystemClock.sleep((long) activity.stepTime);
+        }
+    }
 
 	/**
 	 * Set the activity, so we can update the board
