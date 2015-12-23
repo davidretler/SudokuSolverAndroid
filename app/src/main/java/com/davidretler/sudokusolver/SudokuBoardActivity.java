@@ -3,17 +3,52 @@ package com.davidretler.sudokusolver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 public class SudokuBoardActivity extends AppCompatActivity {
 
+    // whether or not we solve the board step-by-step
+    static boolean step = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // start the activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sudoku_board);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // crate the memu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle menu item selections
+        if(item.getItemId() == R.id.step_by_step) {
+            // checkbox for step-by-step
+            if(item.isChecked()) {
+                // uncheck if checked
+                item.setChecked(false);
+                step = false;
+            } else {
+                // check if unchecked
+                item.setChecked(true);
+                step = true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // solve the board
     public void solveBoard(View view) {
         Log.d("solveBoard()", "This will solve the board");
         Log.d("solveBoard()", "Turning off listeners");
