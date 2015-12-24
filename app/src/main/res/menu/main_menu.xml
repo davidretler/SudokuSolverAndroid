@@ -9,4 +9,12 @@
         android:id="@+id/step_time"
         android:title="Time step"
         />
+    <item
+        android:id="@+id/playPause"
+        android:title="Pause"
+        />
+    <item
+        android:id="@+id/doStep"
+        android:title="Step Once"
+        />
 </menu>

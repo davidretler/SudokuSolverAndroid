@@ -1,6 +1,7 @@
 package com.davidretler.sudokusolver;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.Objects;
 
 public class SudokuBoardActivity extends AppCompatActivity {
 
@@ -20,6 +23,11 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
     // are we currently solving the board?
     static boolean solving = false;
+    // is the solver paused?
+    static boolean paused = false;
+
+    private SolveThread solveThread = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +35,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sudoku_board);
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // crate the memu
@@ -39,69 +47,56 @@ public class SudokuBoardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle menu item selections
-        if(item.getItemId() == R.id.step_by_step) {
-            // checkbox for step-by-step
-            if(item.isChecked()) {
-                // uncheck if checked
-                item.setChecked(false);
-                step = false;
-            } else {
-                // check if unchecked
-                item.setChecked(true);
-                step = true;
-            }
-            return true;
-        } else if (item.getItemId() == R.id.step_time) {
-            Alerts.timeDialog(this);
+        switch (item.getItemId()) {
+            case R.id.step_by_step:
+                // checkbox for step-by-step
+                if(item.isChecked()) {
+                    // uncheck if checked
+                    item.setChecked(false);
+                    step = false;
+                } else {
+                    // check if unchecked
+                    item.setChecked(true);
+                    step = true;
+                }
+                return true;
+
+            case R.id.step_time:
+                Alerts.timeDialog(this);
+                return true;
+
+            case R.id.playPause:
+                if(item.getTitle().toString().equals("Pause")) {
+                    if(solving) {
+                        Log.d("Menu", "Pausing");
+                        solveThread.pause();
+                        item.setTitle("Play");
+                        paused = true;
+                    }
+                } else {
+                    if(solving) {
+                        Log.d("Menu", "Playing");
+                        solveThread.lock.notifyAll();
+                        item.setTitle("Pause");
+                        paused = false;
+                    }
+                }
+
+            default:
+                return false;
         }
-        return false;
     }
 
     // solve the board
     public void solveBoard(View view) {
         Log.d("solveBoard()", "This will solve the board");
 
-        // final context for creating dialog
-        final Context context = view.getContext();
-        final SudokuBoard myBoard = parseBoard(view);
+        SudokuBoard myBoard = parseBoard(view);
         myBoard.setActivity(this);
 
         // background thread to solve the board
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                SudokuBoardActivity.solving = true;
-                // turn of listeners while solving board, for performance
-                Log.d("solveBoard()", "Turning off listeners");
-                SudokuCell.ignoreListeners = true;
-
-                Log.d("solveBoard()", "Solving board");
-                myBoard.solve();
-                if (myBoard.solved()) {
-                    // display the board... must be called through UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            displayBoard(myBoard);
-                        }
-                    });
-                } else {
-                    // display error that there is no solution
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Alerts.error("No Solution", "The current board has no valid solution.", context);
-                        }
-                    });
-                }
-
-                // turn the listeners back on
-                Log.d("solveBoard()", "Turning on listeners");
-                SudokuCell.ignoreListeners = false;
-                SudokuBoardActivity.solving = false;
-            }
-        }).start();
+        solveThread = new SolveThread(this, myBoard);
+        solveThread.start();
 
 
     }
