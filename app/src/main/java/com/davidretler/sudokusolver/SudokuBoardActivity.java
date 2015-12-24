@@ -35,7 +35,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sudoku_board);
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // crate the memu
@@ -69,16 +69,17 @@ public class SudokuBoardActivity extends AppCompatActivity {
                 if(item.getTitle().toString().equals("Pause")) {
                     if(solving) {
                         Log.d("Menu", "Pausing");
-                        solveThread.pause();
                         item.setTitle("Play");
                         paused = true;
                     }
                 } else {
                     if(solving) {
-                        Log.d("Menu", "Playing");
-                        solveThread.lock.notifyAll();
-                        item.setTitle("Pause");
-                        paused = false;
+                        synchronized (solveThread.lock) {
+                            Log.d("Menu", "Playing");
+                            paused = false;
+                            item.setTitle("Pause");
+                            solveThread.lock.notifyAll();
+                        }
                     }
                 }
 

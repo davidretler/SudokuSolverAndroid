@@ -7,7 +7,7 @@ import android.util.Log;
  */
 public class SolveThread extends Thread {
 
-    public Object lock = new Object();
+    public final Object lock = new Object();
 
     private static SudokuBoardActivity activity;
     private static SudokuBoard myBoard;
@@ -53,16 +53,8 @@ public class SolveThread extends Thread {
         super(new SolveRun());
         SolveThread.activity = activity;
         SolveThread.myBoard = myBoard;
+        SolveThread.myBoard.setSolveThread(this);
 
-    }
-
-    public void pause() {
-        try {
-            lock.wait();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-            Alerts.error("Error", "There was an error while pausing the thread.", activity);
-        }
     }
 }
 

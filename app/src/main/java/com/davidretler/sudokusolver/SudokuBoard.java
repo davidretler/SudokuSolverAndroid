@@ -10,18 +10,27 @@ public class SudokuBoard {
 	// reference to the activity (to update the board)
 	private SudokuBoardActivity activity = null;
 
+    private SolveThread thread;
+
     // runnable to update the board
     // thgis is necessary as updating the UI cannot be done in the solve thread
     // so we must post this runnable to the UI thread
-    private class BoardUpdater implements Runnable {
+    private static class BoardUpdater implements Runnable {
+
+        SudokuBoardActivity activity;
+        SudokuBoard myBoard;
+
+        public BoardUpdater(SudokuBoardActivity activity, SudokuBoard myBoard) {
+            this.activity = activity;
+            this.myBoard = myBoard;
+        }
 
         @Override
         public void run() {
-            Log.d("definiteMove()", "Displaying board");
-            activity.displayBoard(SudokuBoard.this);
+            Log.d("BoardUpdater", "Displaying board");
+            activity.displayBoard(myBoard);
         }
     }
-
 
 	/**
 	 * Defult constructor. Creates a blank board.
@@ -64,6 +73,7 @@ public class SudokuBoard {
 		board[i][j] = num;
 
 		if (this.check()) {
+            updateIfStep();
 			return true;
 		} else {
 			board[i][j] = oldIJ;
@@ -183,9 +193,6 @@ public class SudokuBoard {
 		if (count == 1) {
 			for (int num = 1; num <= 9; num++) {
 				if (this.set(i, j, num)) {
-					// update board if we're watching step-by-step
-                    updateIfStep();
-
                     Log.d("definiteMove()", "Made definite move");
 					break;
 				}
@@ -295,8 +302,6 @@ public class SudokuBoard {
 					// if we can set the current position to, do so and solve
 					// rest of board
 
-                    // display board if updating step by step
-                    updateIfStep();
 
 					// next i value is either i+1 or 1 if i is already 9
 					int nextI = i < 8 ? i + 1 : 1;
@@ -367,7 +372,21 @@ public class SudokuBoard {
 
     private void updateIfStep() {
         if(activity.step) {
-            activity.runOnUiThread(new BoardUpdater());
+            synchronized (thread.lock) {
+                while (SudokuBoardActivity.paused) {
+                    Log.d("updateIfStep()", "Waiting to unpause");
+                    try {
+                        Log.d("updateIfStep()", "Waiting...");
+                        thread.lock.wait();
+                        Log.d("updateIfStep()", "...done");
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                        Alerts.error("Error", "An unexprected interrupt occured.", activity);
+                    }
+                }
+            }
+            Log.d("updateIfStep()", "Updating");
+            activity.runOnUiThread(new BoardUpdater(activity, this));
             SystemClock.sleep((long) activity.stepTime);
         }
     }
@@ -376,8 +395,12 @@ public class SudokuBoard {
 	 * Set the activity, so we can update the board
 	 * @param activity the activity
 	 */
-	public void setActivity(SudokuBoardActivity activity) {
-		this.activity = activity;
+	void setActivity(SudokuBoardActivity activity) {
+        this.activity = activity;
 	}
+
+    void setSolveThread(SolveThread thread) {
+        this.thread = thread;
+    }
 
 }
