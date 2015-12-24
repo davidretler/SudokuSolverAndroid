@@ -26,11 +26,6 @@ public class Alerts {
                         //do nothing
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
                 .setIcon(R.drawable.ic_info_outline_grey_800_18dp)
                 .show();
     }
@@ -43,11 +38,6 @@ public class Alerts {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //do nothing
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
                     }
                 })
                 .setIcon(R.drawable.ic_warning_grey_800_18dp)

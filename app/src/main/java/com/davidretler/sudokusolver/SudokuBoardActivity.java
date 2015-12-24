@@ -87,7 +87,13 @@ public class SudokuBoardActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Alerts.error("No Solution", "The current board has no valid solution.", context);
+                    // display error that there is no solution
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Alerts.error("No Solution", "The current board has no valid solution.", context);
+                        }
+                    });
                 }
 
                 // turn the listeners back on
@@ -148,6 +154,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         return new SudokuBoard(boardArray);
     }
 
+    // display the board
     void displayBoard(SudokuBoard board) {
 
         Log.d("displayBoard()", "Turning off listeners");
@@ -195,6 +202,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         SudokuCell.ignoreListeners = false;
     }
 
+    // get a particular cell
     private SudokuCell getCell(int gridRow, int gridCol, int cellRow, int cellCol) {
         int gridId = getResources().getIdentifier("grid" + gridRow + gridCol, "id", "com.davidretler.sudokusolver");
         View currGrid = findViewById(gridId);
