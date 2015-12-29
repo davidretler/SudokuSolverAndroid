@@ -28,6 +28,7 @@ public class SudokuBoard {
         @Override
         public void run() {
             Log.d("BoardUpdater", "Displaying board");
+			Log.d("BoardUpdater", myBoard.toString());
             activity.displayBoard(myBoard);
         }
     }
@@ -73,7 +74,6 @@ public class SudokuBoard {
 		board[i][j] = num;
 
 		if (this.check()) {
-            updateIfStep();
 			return true;
 		} else {
 			board[i][j] = oldIJ;
@@ -182,6 +182,7 @@ public class SudokuBoard {
 
 		int count = 0;
 
+        // count number of possible moves
 		for (int num = 1; num <= 9; num++) {
 			if (this.set(i, j, num)) {
 				count++;
@@ -194,6 +195,7 @@ public class SudokuBoard {
 			for (int num = 1; num <= 9; num++) {
 				if (this.set(i, j, num)) {
                     Log.d("definiteMove()", "Made definite move");
+                    updateIfStep();
 					break;
 				}
 			}
@@ -300,7 +302,8 @@ public class SudokuBoard {
 			for (int n = 1; n <= 9; n++) {
 				if (this.set(i, j, n)) {
 					// if we can set the current position to, do so and solve
-					// rest of board
+					// rest of board (this is guess)
+                    updateIfStep();
 
 
 					// next i value is either i+1 or 1 if i is already 9
@@ -386,6 +389,7 @@ public class SudokuBoard {
                 }
             }
             Log.d("updateIfStep()", "Updating");
+			Log.d("updateIfStep()", this.toString());
             activity.runOnUiThread(new BoardUpdater(activity, this));
             SystemClock.sleep((long) activity.stepTime);
         }

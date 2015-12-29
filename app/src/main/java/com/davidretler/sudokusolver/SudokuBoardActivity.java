@@ -28,6 +28,9 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
     private SolveThread solveThread = null;
 
+    // board to share between threads
+    public volatile SudokuBoard theBoard = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +96,11 @@ public class SudokuBoardActivity extends AppCompatActivity {
         Log.d("solveBoard()", "This will solve the board");
 
         SudokuBoard myBoard = parseBoard(view);
+        this.theBoard = myBoard;
         myBoard.setActivity(this);
 
         // background thread to solve the board
-        solveThread = new SolveThread(this, myBoard);
+        solveThread = new SolveThread(this, theBoard);
         solveThread.start();
 
 
@@ -152,6 +156,8 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
     // display the board
     void displayBoard(SudokuBoard board) {
+
+        Log.d("displayBoard()", board.toString());
 
         Log.d("displayBoard()", "Turning off listeners");
         SudokuCell.ignoreListeners = true;

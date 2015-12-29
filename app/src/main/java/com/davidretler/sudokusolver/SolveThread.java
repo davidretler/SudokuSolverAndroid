@@ -54,7 +54,6 @@ public class SolveThread extends Thread {
         SolveThread.activity = activity;
         SolveThread.myBoard = myBoard;
         SolveThread.myBoard.setSolveThread(this);
-
     }
 }
 
