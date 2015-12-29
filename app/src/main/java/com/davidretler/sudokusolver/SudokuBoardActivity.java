@@ -31,6 +31,8 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // board to share between threads
     public volatile SudokuBoard theBoard = null;
 
+    private Menu myMenu = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         // crate the memu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        myMenu = menu;
         return true;
     }
 
@@ -69,22 +72,8 @@ public class SudokuBoardActivity extends AppCompatActivity {
                 return true;
 
             case R.id.playPause:
-                if(item.getTitle().toString().equals("Pause")) {
-                    if(solving) {
-                        Log.d("Menu", "Pausing");
-                        item.setTitle("Play");
-                        paused = true;
-                    }
-                } else {
-                    if(solving) {
-                        synchronized (solveThread.lock) {
-                            Log.d("Menu", "Playing");
-                            paused = false;
-                            item.setTitle("Pause");
-                            solveThread.lock.notifyAll();
-                        }
-                    }
-                }
+                playPause(item);
+                return true;
 
             default:
                 return false;
@@ -93,17 +82,20 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
     // solve the board
     public void solveBoard(View view) {
-        Log.d("solveBoard()", "This will solve the board");
 
-        SudokuBoard myBoard = parseBoard(view);
-        this.theBoard = myBoard;
-        myBoard.setActivity(this);
+        if(!solving) {
+            Log.d("solveBoard()", "This will solve the board");
 
-        // background thread to solve the board
-        solveThread = new SolveThread(this, theBoard);
-        solveThread.start();
+            SudokuBoard myBoard = parseBoard(view);
+            this.theBoard = myBoard;
+            myBoard.setActivity(this);
 
-
+            // background thread to solve the board
+            solveThread = new SolveThread(this, theBoard);
+            solveThread.start();
+        } else if (paused) {
+            playPause(myMenu.findItem(R.id.playPause));
+        }
     }
 
     // parse the current state of the board and return a sudokuboard object with that state
@@ -213,5 +205,24 @@ public class SudokuBoardActivity extends AppCompatActivity {
         int cellId = getResources().getIdentifier("cell" + cellNum, "id", "com.davidretler.sudokusolver");
         Log.d("getCell()", "Trying to get cell " + cellNum);
         return (SudokuCell) currGrid.findViewById(cellId);
+    }
+
+    private void playPause(MenuItem item) {
+        if(item.getTitle().toString().equals("Pause")) {
+            if(solving) {
+                Log.d("Menu", "Pausing");
+                item.setTitle("Play");
+                paused = true;
+            }
+        } else {
+            if(solving) {
+                synchronized (solveThread.lock) {
+                    Log.d("Menu", "Playing");
+                    paused = false;
+                    item.setTitle("Pause");
+                    solveThread.lock.notifyAll();
+                }
+            }
+        }
     }
 }
