@@ -373,7 +373,21 @@ public class SudokuBoard {
 
 	}
 
+    // update the board
     private void updateIfStep() {
+
+        if(thread.pauseOnUpdate) {
+            SudokuBoardActivity.paused = true;
+            activity.runOnUiThread(new BoardUpdater(activity, this));
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.setPause();
+                }
+            });
+            thread.pauseOnUpdate = false;
+        }
+
         if(activity.step) {
             synchronized (thread.lock) {
                 while (SudokuBoardActivity.paused) {
@@ -384,14 +398,14 @@ public class SudokuBoard {
                         Log.d("updateIfStep()", "...done");
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
-                        Alerts.error("Error", "An unexprected interrupt occured.", activity);
+                        Alerts.error("Error", "An unexpected interrupt occurred.", activity);
                     }
                 }
+                activity.runOnUiThread(new BoardUpdater(activity, this));
+                SystemClock.sleep((long) activity.stepTime);
             }
             Log.d("updateIfStep()", "Updating");
 			Log.d("updateIfStep()", this.toString());
-            activity.runOnUiThread(new BoardUpdater(activity, this));
-            SystemClock.sleep((long) activity.stepTime);
         }
     }
 

@@ -3,6 +3,8 @@ package com.davidretler.sudokusolver;
 import android.util.Log;
 
 /**
+ * Thread that solves the board
+ *
  * Created by david on 12/24/15.
  */
 public class SolveThread extends Thread {
@@ -11,6 +13,10 @@ public class SolveThread extends Thread {
 
     private static SudokuBoardActivity activity;
     private static SudokuBoard myBoard;
+
+    // should we pause the thread after the next update?
+    boolean pauseOnUpdate = false;
+
 
     private static class SolveRun implements Runnable {
 
@@ -54,6 +60,24 @@ public class SolveThread extends Thread {
         SolveThread.activity = activity;
         SolveThread.myBoard = myBoard;
         SolveThread.myBoard.setSolveThread(this);
+    }
+
+    public SolveThread(SudokuBoardActivity activity, SudokuBoard myBoard, boolean pause) {
+        this(activity, myBoard);
+        this.pauseOnUpdate = pause;
+    }
+
+    public void step() {
+        pauseOnUpdate = true;
+        if(SudokuBoardActivity.paused) {
+            if(this.getState() == State.WAITING) {
+                Log.d("step()", "Thread is waiting: updating");
+                synchronized (lock) {
+                    SudokuBoardActivity.paused = false;
+                    lock.notifyAll();
+                }
+            }
+        }
     }
 }
 

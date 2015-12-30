@@ -1,7 +1,5 @@
 package com.davidretler.sudokusolver;
 
-import android.content.Context;
-import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import java.util.Objects;
 
 public class SudokuBoardActivity extends AppCompatActivity {
 
@@ -26,11 +22,13 @@ public class SudokuBoardActivity extends AppCompatActivity {
     // is the solver paused?
     static boolean paused = false;
 
+    // thread that solves the board
     private SolveThread solveThread = null;
 
     // board to share between threads
     public volatile SudokuBoard theBoard = null;
 
+    // reference to the menu
     private Menu myMenu = null;
 
 
@@ -55,16 +53,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
         // handle menu item selections
         switch (item.getItemId()) {
             case R.id.step_by_step:
-                // checkbox for step-by-step
-                if(item.isChecked()) {
-                    // uncheck if checked
-                    item.setChecked(false);
-                    step = false;
-                } else {
-                    // check if unchecked
-                    item.setChecked(true);
-                    step = true;
-                }
+                toggleStep(item);
                 return true;
 
             case R.id.step_time:
@@ -75,6 +64,10 @@ public class SudokuBoardActivity extends AppCompatActivity {
                 playPause(item);
                 return true;
 
+            case R.id.doStep:
+                doStep();
+                return true;
+
             default:
                 return false;
         }
@@ -82,7 +75,15 @@ public class SudokuBoardActivity extends AppCompatActivity {
 
     // solve the board
     public void solveBoard(View view) {
+        solveBoard(view, false);
+    }
 
+    /**
+     * Solve the board
+     * @param view some view with the same context as the board
+     * @param pause whether not we should pause after the first step
+     */
+    public void solveBoard(View view, boolean pause) {
         if(!solving) {
             Log.d("solveBoard()", "This will solve the board");
 
@@ -91,7 +92,7 @@ public class SudokuBoardActivity extends AppCompatActivity {
             myBoard.setActivity(this);
 
             // background thread to solve the board
-            solveThread = new SolveThread(this, theBoard);
+            solveThread = new SolveThread(this, theBoard, pause);
             solveThread.start();
         } else if (paused) {
             playPause(myMenu.findItem(R.id.playPause));
@@ -175,25 +176,34 @@ public class SudokuBoardActivity extends AppCompatActivity {
         }
     }
 
+    // clears the entire board
     public void clearBoard(View view) {
 
-        Log.d("clearBoard()", "Turning off listeners");
-        SudokuCell.ignoreListeners = true;
+        // do not clear if we are currently solving
+        if (!solving) {
+            Log.d("clearBoard()", "Turning off listeners");
+            SudokuCell.ignoreListeners = true;
 
-        for(int gridRow = 1; gridRow <= 3; gridRow++) {
-            for(int gridCol = 1; gridCol <= 3; gridCol++) {
-                for(int cellRow = 1; cellRow <= 3; cellRow++) {
-                    for(int cellCol = 1; cellCol <= 3; cellCol++) {
+            for (int gridRow = 1; gridRow <= 3; gridRow++) {
+                for (int gridCol = 1; gridCol <= 3; gridCol++) {
+                    for (int cellRow = 1; cellRow <= 3; cellRow++) {
+                        for (int cellCol = 1; cellCol <= 3; cellCol++) {
 
-                        SudokuCell cell = getCell(gridRow, gridCol, cellRow, cellCol);
-                        cell.setText("");
+                            SudokuCell cell = getCell(gridRow, gridCol, cellRow, cellCol);
+                            cell.setText("");
+                        }
                     }
                 }
             }
-        }
 
-        Log.d("clearBoard()", "Turning on listeners");
-        SudokuCell.ignoreListeners = false;
+            Log.d("clearBoard()", "Turning on listeners");
+            SudokuCell.ignoreListeners = false;
+        }
+    }
+
+    // set the play/pause button to say pause (called when thread automatically pauses)
+    public void setPause() {
+        myMenu.findItem(R.id.playPause).setTitle("Play");
     }
 
     // get a particular cell
@@ -207,22 +217,54 @@ public class SudokuBoardActivity extends AppCompatActivity {
         return (SudokuCell) currGrid.findViewById(cellId);
     }
 
+    // toggles the play/pause state
     private void playPause(MenuItem item) {
-        if(item.getTitle().toString().equals("Pause")) {
-            if(solving) {
-                Log.d("Menu", "Pausing");
-                item.setTitle("Play");
-                paused = true;
-            }
-        } else {
-            if(solving) {
-                synchronized (solveThread.lock) {
-                    Log.d("Menu", "Playing");
-                    paused = false;
-                    item.setTitle("Pause");
-                    solveThread.lock.notifyAll();
+        if(step) {
+            if (!paused) {
+                if (solving) {
+                    Log.d("Menu", "Pausing");
+                    item.setTitle("Play");
+                    paused = true;
+                }
+            } else {
+                if (solving) {
+                    synchronized (solveThread.lock) {
+                        Log.d("Menu", "Playing");
+                        paused = false;
+                        item.setTitle("Pause");
+                        solveThread.lock.notifyAll();
+                    }
                 }
             }
+        }
+    }
+
+    private void toggleStep(MenuItem item) {
+        // checkbox for step-by-step
+        if(item.isChecked()) {
+            // uncheck if checked
+            item.setChecked(false);
+            step = false;
+        } else {
+            // check if unchecked
+            item.setChecked(true);
+            step = true;
+        }
+    }
+
+    // peforms the next step and then pauses
+    private void doStep() {
+
+        // set to step-by-step if currently not
+        if(!step) {
+            toggleStep(myMenu.findItem(R.id.step_by_step));
+        }
+
+        // start solving if currently not
+        if(!solving) {
+            solveBoard(findViewById(R.id.solveButton), true);
+        } else {
+            solveThread.step();
         }
     }
 }
